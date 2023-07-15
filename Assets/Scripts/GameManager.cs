@@ -11,6 +11,32 @@ namespace AlexDev.SpaceTanks
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
+        public static GameManager Instance;
+
+        [SerializeField] private GameObject _playerPrefab;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+        private void Start()
+        {
+            if (_playerPrefab == null)
+            {
+                Debug.LogError("<Color=red><a>Missing</a></Color> playerPrefab Reference.");
+            }
+            else
+            {
+                Debug.Log($"We are Instatiating LocalPlayer from {SceneManager.GetActiveScene().name}");
+                PhotonNetwork.Instantiate(
+                    _playerPrefab.name,
+                    new Vector2(UnityEngine.Random.Range(-3, 3), UnityEngine.Random.Range(-3, 3)),
+                    Quaternion.identity);
+
+            }
+        }
+
         public override void OnLeftRoom()
         {
             SceneManager.LoadScene("Lobby");
