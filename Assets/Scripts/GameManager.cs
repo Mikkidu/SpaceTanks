@@ -14,6 +14,9 @@ namespace AlexDev.SpaceTanks
         public static GameManager Instance;
 
         [SerializeField] private GameObject _playerPrefab;
+#if PLATFORM_ANDROID
+        [SerializeField] private JoystickManager _joystickManagerPrefab;
+#endif
 
         private void Awake()
         {
@@ -29,13 +32,29 @@ namespace AlexDev.SpaceTanks
             else
             {
                 Debug.Log($"We are Instatiating LocalPlayer from {SceneManager.GetActiveScene().name}");
-                PhotonNetwork.Instantiate(
+                InstantPlayer();
+            }
+        }
+
+        private void InstantPlayer()
+        {
+            GameObject player = PhotonNetwork.Instantiate(
                     _playerPrefab.name,
                     new Vector2(UnityEngine.Random.Range(-3, 3), UnityEngine.Random.Range(-3, 3)),
                     Quaternion.identity);
-
-            }
+#if PLATFORM_ANDROID
+            AddJoystick(player);
+#endif
         }
+
+#if PLATFORM_ANDROID
+        private void AddJoystick(GameObject player)
+        {
+            JoystickManager joystickManager = Instantiate(_joystickManagerPrefab, GameObject.FindObjectOfType<Canvas>().transform);
+            player.GetComponent<MoveController>().SetJoystick = joystickManager.GetLeftJoystick;
+            player.GetComponent<GunController>().SetJoystick = joystickManager.GetRightJoystick;
+        }
+#endif
 
         public override void OnLeftRoom()
         {

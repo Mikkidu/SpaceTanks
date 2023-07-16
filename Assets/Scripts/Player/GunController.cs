@@ -19,6 +19,13 @@ namespace AlexDev.SpaceTanks
         private UnitHealth _shipHealthScript;
         private float _attackTimer;
         private float _rotateSpeed;
+#if PLATFORM_ANDROID
+        private Joystick _joystick;
+        public Joystick SetJoystick
+        {
+            set { _joystick = value; }
+        }
+#endif
 
 
         private void Awake()
@@ -30,36 +37,38 @@ namespace AlexDev.SpaceTanks
             }
             _shipHealthScript = GetComponent<UnitHealth>();
         }
-        void Start()
-        {
-        
-        }
 
         void LateUpdate()
         {
             if (_shipHealthScript.IsAlive)
             {
-                if (Input.GetMouseButton(0))
-                {
-                    Aiming();
-                    Attack();
-                }
-                else
-                {
-                    Rest();
-                }
+                Aiming();
+            }
+        }
+
+        private void Aiming()
+        {
+#if PLATFORM_ANDROID
+            if (_joystick.Direction != Vector2.zero)
+            {
+                GunRotating(_joystick.Direction);
+#else
+            if {Input.GetMouseButton(0)}
+            {
+                Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                GunRotating(mousePosition - (Vector2)transform.position);
+#endif
+                Attack();
+            }
+            else
+            {
+                Rest();
             }
         }
 
         private void Rest()
         {
             GunRotating(transform.up);
-        }
-
-        private void Aiming()
-        {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            GunRotating(mousePosition - (Vector2)transform.position);
         }
 
         private void GunRotating(Vector2 direction)

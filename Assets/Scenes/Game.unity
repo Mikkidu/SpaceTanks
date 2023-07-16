@@ -282,12 +282,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1080, y: 1920}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -934,7 +934,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3630331075911304589, guid: 2b4507e3aff132b49a62cf53e59f536b, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3630331075911304589, guid: 2b4507e3aff132b49a62cf53e59f536b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -982,6 +982,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3630331075911304589, guid: 2b4507e3aff132b49a62cf53e59f536b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7827760127056041526, guid: 2b4507e3aff132b49a62cf53e59f536b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7827760127056041526, guid: 2b4507e3aff132b49a62cf53e59f536b, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7827760127056041526, guid: 2b4507e3aff132b49a62cf53e59f536b, type: 3}
+      propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8469264264681355604, guid: 2b4507e3aff132b49a62cf53e59f536b, type: 3}
@@ -1078,6 +1090,10 @@ PrefabInstance:
       propertyPath: _playerPrefab
       value: 
       objectReference: {fileID: 6257016730716614480, guid: 7edff60e888d02c40a47b79abad74af2, type: 3}
+    - target: {fileID: 6095007335534370118, guid: 529f053207d5aa44e8206f7e0f172789, type: 3}
+      propertyPath: _joystickManagerPrefab
+      value: 
+      objectReference: {fileID: 5565487630932130703, guid: 9aa768c550b5f584dbfca72147bacb24, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 529f053207d5aa44e8206f7e0f172789, type: 3}
 --- !u!114 &5637340533891180056 stripped

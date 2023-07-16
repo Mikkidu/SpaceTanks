@@ -53,7 +53,10 @@ namespace AlexDev.SpaceTanks
                 _targetPosition = _targetTransform.position;
                 _targetPosition.y += _characterControllerHeight;
                 transform.position = Camera.main.WorldToScreenPoint(_targetPosition) + _screenOffset;
-
+            }
+            else
+            {
+                Destroy(gameObject);
             }
         }
 

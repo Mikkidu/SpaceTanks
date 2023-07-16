@@ -12,9 +12,17 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private float _rotateSmooth;
         [SerializeField] private float _moveSpeed;
 
-
         private float _rotateSpeed;
         private UnitHealth _shipHealth;
+
+
+#if PLATFORM_ANDROID
+        private Joystick _joystick;
+        public Joystick SetJoystick
+        {
+            set { _joystick = value; }
+        }
+#endif
 
         private void Awake()
         {
@@ -40,18 +48,17 @@ namespace AlexDev.SpaceTanks
             {
                 Debug.LogError("<Color=Red><a>Missing</a></Color> CameraWork Component on playerPrefab.", this);
             }
-
-
         }
 
         void Update()
         {
             if (_shipHealth.IsAlive)
             {
-                float horizontalInput = Input.GetAxis("Horizontal");
-                float verticallInput = Input.GetAxis("Vertical");
-                Vector2 direction = new Vector2(horizontalInput, verticallInput);
-                Move(direction);
+#if PLATFORM_ANDROID
+                Move(_joystick.Direction);
+#else
+                Move(GetKeybordDirection());
+#endif
             }
         }
 
@@ -67,6 +74,11 @@ namespace AlexDev.SpaceTanks
             }
         }
 
-        
+        private Vector2 GetKeybordDirection()
+        {
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticallInput = Input.GetAxis("Vertical");
+            return new Vector2(horizontalInput, verticallInput);
+        }
     }
 }
