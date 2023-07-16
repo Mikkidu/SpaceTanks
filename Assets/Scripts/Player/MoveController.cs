@@ -50,7 +50,7 @@ namespace AlexDev.SpaceTanks
             }
         }
 
-        void Update()
+        void LateUpdate()
         {
             if (_shipHealth.IsAlive)
             {
