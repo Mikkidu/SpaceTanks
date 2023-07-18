@@ -19,7 +19,7 @@ GameObject:
   - component: {fileID: 6257016730716614493}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,6 +55,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rotateSmooth: 50
   _moveSpeed: 3
+  _joystickManagerPrefab: {fileID: 5565487630932130703, guid: 9aa768c550b5f584dbfca72147bacb24, type: 3}
 --- !u!114 &6257016730716614494
 MonoBehaviour:
   m_ObjectHideFlags: 0

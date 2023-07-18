@@ -44,16 +44,21 @@ namespace AlexDev.SpaceTanks
         {
             if (viewId != photonView.ViewID)
             {
-                ChangeHealth(-damage);
-                if (!PhotonNetwork.IsMasterClient)
-                {
-                    photonView.RPC("ChangeHealth", RpcTarget.MasterClient, -damage);
-                }
+                TakeDamage(damage);
                 return true;
             }
             else
             {
                 return false;
+            }
+        }
+
+        public void TakeDamage(int damage)
+        {
+            ChangeHealth(-damage);
+            if (!PhotonNetwork.IsMasterClient)
+            {
+                photonView.RPC("ChangeHealth", RpcTarget.MasterClient, -damage);
             }
         }
 

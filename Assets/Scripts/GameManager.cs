@@ -1,5 +1,5 @@
 using System.Collections;
-using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,9 +14,12 @@ namespace AlexDev.SpaceTanks
         public static GameManager Instance;
 
         [SerializeField] private GameObject _playerPrefab;
-#if PLATFORM_ANDROID
-        [SerializeField] private JoystickManager _joystickManagerPrefab;
-#endif
+
+        private static int _coinsValue;
+
+        public delegate void OnCoinsChange(int coinsValue);
+        public static OnCoinsChange OnCoinsChangeEvent;
+
 
         private void Awake()
         {
@@ -42,19 +45,7 @@ namespace AlexDev.SpaceTanks
                     _playerPrefab.name,
                     new Vector2(UnityEngine.Random.Range(-3, 3), UnityEngine.Random.Range(-3, 3)),
                     Quaternion.identity);
-#if PLATFORM_ANDROID
-            AddJoystick(player);
-#endif
         }
-
-#if PLATFORM_ANDROID
-        private void AddJoystick(GameObject player)
-        {
-            JoystickManager joystickManager = Instantiate(_joystickManagerPrefab, GameObject.FindObjectOfType<Canvas>().transform);
-            player.GetComponent<MoveController>().SetJoystick = joystickManager.GetLeftJoystick;
-            player.GetComponent<GunController>().SetJoystick = joystickManager.GetRightJoystick;
-        }
-#endif
 
         public override void OnLeftRoom()
         {
@@ -74,6 +65,24 @@ namespace AlexDev.SpaceTanks
         public void LeaveRoom()
         {
             PhotonNetwork.LeaveRoom();
+        }
+
+        public static void AddCoins(int amount)
+        {
+            _coinsValue += amount;
+            if (OnCoinsChangeEvent != null)
+                OnCoinsChangeEvent.Invoke(_coinsValue);
+        }
+
+        [PunRPC]
+        private static void UpdateCoins(int coinsAmount)
+        {
+
+        }
+
+        public static void SpendCoins(int price)
+        {
+
         }
 
     }

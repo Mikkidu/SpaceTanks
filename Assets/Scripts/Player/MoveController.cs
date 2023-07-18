@@ -11,6 +11,9 @@ namespace AlexDev.SpaceTanks
     {
         [SerializeField] private float _rotateSmooth;
         [SerializeField] private float _moveSpeed;
+#if PLATFORM_ANDROID
+        [SerializeField] private JoystickManager _joystickManagerPrefab;
+#endif
 
         private float _rotateSpeed;
         private UnitHealth _shipHealth;
@@ -31,7 +34,19 @@ namespace AlexDev.SpaceTanks
                 enabled = false;
                 return;
             }
+#if PLATFORM_ANDROID
+            AddJoystick();
+#endif
         }
+
+#if PLATFORM_ANDROID
+        private void AddJoystick()
+        {
+            JoystickManager joystickManager = Instantiate(_joystickManagerPrefab, GameObject.FindObjectOfType<Canvas>().transform);
+            GetComponent<MoveController>().SetJoystick = joystickManager.GetLeftJoystick;
+            GetComponent<GunController>().SetJoystick = joystickManager.GetRightJoystick;
+        }
+#endif
 
         void Start()
         {
@@ -74,11 +89,13 @@ namespace AlexDev.SpaceTanks
             }
         }
 
+#if !PLATFORM_ANDROID
         private Vector2 GetKeybordDirection()
         {
             float horizontalInput = Input.GetAxis("Horizontal");
             float verticallInput = Input.GetAxis("Vertical");
             return new Vector2(horizontalInput, verticallInput);
         }
+#endif
     }
 }
