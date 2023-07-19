@@ -84,9 +84,9 @@ namespace AlexDev.SpaceTanks
             if (direction != Vector2.zero)
             {
                 float directionAngle = Vector2.SignedAngle(transform.up, direction) + transform.eulerAngles.z;
-                float newAngle = Mathf.SmoothDampAngle(transform.eulerAngles.z, directionAngle, ref _rotateSpeed, _rotateSmooth, Mathf.Infinity, Time.deltaTime);
+                float newAngle = Mathf.SmoothDampAngle(transform.eulerAngles.z, directionAngle, ref _rotateSpeed, _rotateSmooth, Mathf.Infinity, Time.deltaTime) % 360;
 
-                transform.eulerAngles = Vector3.forward * (newAngle % 360);
+                transform.eulerAngles = Vector3.forward * newAngle;
                 transform.Translate(transform.up * _moveSpeed * Time.deltaTime, Space.World);
             }
         }
