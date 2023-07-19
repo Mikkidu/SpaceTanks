@@ -103,12 +103,15 @@ namespace AlexDev.SpaceTanks
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             if (OnMessageSendEvent != null)
                 OnMessageSendEvent.Invoke("Connected to room. Ready for players");
-            if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
-                LoadLevel();
+            /*if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
+                LoadLevel();*/
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
+            if (!PhotonNetwork.IsMasterClient)
+                return;
+
             if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 LoadLevel();
         }
@@ -125,9 +128,9 @@ namespace AlexDev.SpaceTanks
         public void JoinRoom(string roomName)
         {
             if (!PhotonNetwork.InRoom)
-            {
                 PhotonNetwork.JoinRoom(roomName);
-            }
+            else if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+                LoadLevel();
             _isRedyToEnter = true;
             /*if (!PhotonNetwork.InRoom)
             {
