@@ -53,7 +53,7 @@ namespace AlexDev.SpaceTanks
             {
                 GunRotating(_joystick.Direction);
 #else
-            if {Input.GetMouseButton(0)}
+            if (Input.GetMouseButton(0))
             {
                 Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 GunRotating(mousePosition - (Vector2)transform.position);

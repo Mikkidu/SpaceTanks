@@ -10,5 +10,6 @@ namespace AlexDev.SpaceTanks
         public int viewID;
         public int coins;
         public int frags;
+        public int deaths;
     }
 }
