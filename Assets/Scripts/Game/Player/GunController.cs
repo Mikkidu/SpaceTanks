@@ -74,7 +74,7 @@ namespace AlexDev.SpaceTanks
         private void GunRotating(Vector2 direction)
         {
             float directionAngle = Vector2.SignedAngle(_gun.up, direction) + _gun.eulerAngles.z;
-            float newAngle = Mathf.SmoothDamp(_gun.eulerAngles.z, directionAngle, ref _rotateSpeed, _rotationSmoothness) % 360;
+            float newAngle = Mathf.SmoothDamp(_gun.eulerAngles.z, directionAngle, ref _rotateSpeed, _rotationSmoothness, Mathf.Infinity, Time.deltaTime) % 360;
             _gun.eulerAngles = Vector3.forward * newAngle;
         }
 

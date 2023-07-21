@@ -106,11 +106,13 @@ namespace AlexDev.SpaceTanks
                 OnMessageSendEvent.Invoke("Connected to room. Ready for players");
             /*if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 LoadLevel();*/
-            
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
+            if (!PhotonNetwork.IsMasterClient)
+                return;
+
             if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 LoadLevel();
         }
@@ -143,13 +145,9 @@ namespace AlexDev.SpaceTanks
         public void JoinRoom(string roomName)
         {
             if (!PhotonNetwork.InRoom)
-            {
                 PhotonNetwork.JoinRoom(roomName);
-            }
-            else
-            {
+            else if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 LoadLevel();
-            }
             _isRedyToEnter = true;
             /*if (!PhotonNetwork.InRoom)
             {

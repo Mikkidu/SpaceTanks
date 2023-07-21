@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 using Photon.Pun;
 
@@ -45,6 +46,7 @@ namespace AlexDev.SpaceTanks
             JoystickManager joystickManager = Instantiate(_joystickManagerPrefab, GameObject.FindObjectOfType<Canvas>().transform);
             GetComponent<MoveController>().SetJoystick = joystickManager.GetLeftJoystick;
             GetComponent<GunController>().SetJoystick = joystickManager.GetRightJoystick;
+            _rotateSmooth /= 2;
         }
 #endif
 
@@ -65,7 +67,7 @@ namespace AlexDev.SpaceTanks
             }
         }
 
-        void LateUpdate()
+        void Update()
         {
             if (_shipHealth.IsAlive)
             {
@@ -82,9 +84,9 @@ namespace AlexDev.SpaceTanks
             if (direction != Vector2.zero)
             {
                 float directionAngle = Vector2.SignedAngle(transform.up, direction) + transform.eulerAngles.z;
-                float newAngle = Mathf.SmoothDampAngle(transform.eulerAngles.z, directionAngle, ref _rotateSpeed, _rotateSmooth * Time.deltaTime);
+                float newAngle = Mathf.SmoothDampAngle(transform.eulerAngles.z, directionAngle, ref _rotateSpeed, _rotateSmooth, Mathf.Infinity, Time.deltaTime) % 360;
 
-                transform.eulerAngles = Vector3.forward * (newAngle % 360);
+                transform.eulerAngles = Vector3.forward * newAngle;
                 transform.Translate(transform.up * _moveSpeed * Time.deltaTime, Space.World);
             }
         }

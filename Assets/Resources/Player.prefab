@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd38135b57c3d8e478eb4e2d78a94d14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _rotateSmooth: 50
+  _rotateSmooth: 0.5
   _moveSpeed: 3
   _joystickManagerPrefab: {fileID: 5565487630932130703, guid: 9aa768c550b5f584dbfca72147bacb24, type: 3}
 --- !u!114 &6257016730716614494
