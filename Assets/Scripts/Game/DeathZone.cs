@@ -20,6 +20,7 @@ namespace AlexDev.SpaceTanks
                 if (_nextHitTime < Time.realtimeSinceStartup)
                 {
                     target.TakeDamage(_damage);
+                    _nextHitTime = Time.realtimeSinceStartup + _hitInterval;
                 }
             }
         }
