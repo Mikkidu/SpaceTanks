@@ -6,10 +6,16 @@ namespace AlexDev.SpaceTanks
 {
     public class PlayerGameData
     {
-        public string name;
-        public int viewID;
-        public int coins;
-        public int frags;
-        public int deaths;
+        public string Name;
+        public string UserID;   
+        public int ViewID;
+        public int Coins;
+        public int Frags;
+        public int Deaths;
+
+        public override string ToString()
+        {
+            return Name + "_" + UserID + "\n" + ViewID + " " + Coins + " " + Deaths;
+        }
     }
 }

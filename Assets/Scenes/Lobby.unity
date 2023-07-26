@@ -1792,6 +1792,7 @@ GameObject:
   - component: {fileID: 1423557788}
   - component: {fileID: 1423557787}
   - component: {fileID: 1423557789}
+  - component: {fileID: 1423557790}
   m_Layer: 5
   m_Name: PlayersTable
   m_TagString: Untagged
@@ -1818,7 +1819,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 600, y: 800}
+  m_SizeDelta: {x: 600, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1423557787
 MonoBehaviour:
@@ -1872,6 +1873,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _roomsTable: {fileID: 1665146597}
   _roomSlotPrefab: {fileID: -6388392819645567785, guid: c930376048ae38846a4439b018d922de, type: 3}
+--- !u!114 &1423557790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1423557785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 1
 --- !u!1 &1426529921
 GameObject:
   m_ObjectHideFlags: 0

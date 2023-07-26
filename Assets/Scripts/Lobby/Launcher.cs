@@ -137,7 +137,7 @@ namespace AlexDev.SpaceTanks
         {
             if (_isConnectedToMaster)
             {
-                PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = _maxPlayersPerRoom, IsOpen = true });
+                PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = _maxPlayersPerRoom, IsOpen = true, PublishUserId = true });
                 _lastRoomName = roomName;
             }
         }

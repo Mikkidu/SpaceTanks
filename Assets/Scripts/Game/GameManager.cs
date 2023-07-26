@@ -42,9 +42,14 @@ namespace AlexDev.SpaceTanks
         private void InstantPlayer()
         {
             GameObject player = PhotonNetwork.Instantiate(
-                    _playerPrefab.name,
-                    new Vector2(UnityEngine.Random.Range(-3, 3), UnityEngine.Random.Range(-3, 3)),
-                    Quaternion.identity);
+                _playerPrefab.name,
+                new Vector2(UnityEngine.Random.Range(-3, 3), UnityEngine.Random.Range(-3, 3)),
+                Quaternion.identity);
+            PlayersStats.Instance.photonView.RPC(
+                "AddPlayer", 
+                RpcTarget.All, 
+                PhotonNetwork.LocalPlayer, 
+                player.GetComponent<PhotonView>().ViewID);
         }
 
         public override void OnLeftRoom()
@@ -84,6 +89,5 @@ namespace AlexDev.SpaceTanks
         {
 
         }
-
     }
 }

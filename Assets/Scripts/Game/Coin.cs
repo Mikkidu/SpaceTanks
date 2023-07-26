@@ -12,9 +12,11 @@ namespace AlexDev.SpaceTanks
         {
             if (!collision.CompareTag("Player"))
                 return;
-            if (collision.GetComponent<PhotonView>().IsMine)
+            PhotonView playersPhoton = collision.GetComponent<PhotonView>();
+            if (playersPhoton.IsMine)
             {
-                GameManager.AddCoins(1);
+                PlayersStats.Instance.AddPlayerCoins(playersPhoton.ViewID, 1);
+                //GameManager.AddCoins(1);
                 photonView.RPC("DestroyCoin", RpcTarget.All);
             }
         }
