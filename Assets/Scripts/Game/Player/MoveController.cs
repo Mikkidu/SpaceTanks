@@ -54,6 +54,7 @@ namespace AlexDev.SpaceTanks
         {
             CameraWork _cameraWork = this.gameObject.GetComponent<CameraWork>();
             _shipHealth = GetComponent<PlayerHealth>();
+            PlayersStatsManager.Instance.MyViewID = photonView.ViewID;
             if (_cameraWork != null)
             {
                 if (photonView.IsMine)

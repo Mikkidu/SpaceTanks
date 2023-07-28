@@ -1,9 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Photon.Pun;
 using Photon.Realtime;
-using System.Collections.Generic;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace AlexDev.SpaceTanks
 {
@@ -104,15 +105,12 @@ namespace AlexDev.SpaceTanks
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             if (OnMessageSendEvent != null)
                 OnMessageSendEvent.Invoke("Connected to room. Ready for players");
-            /*if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
-                LoadLevel();*/
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             if (!PhotonNetwork.IsMasterClient)
                 return;
-
             if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 LoadLevel();
         }

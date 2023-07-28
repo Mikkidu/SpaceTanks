@@ -2,31 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+using Photon.Pun;
 namespace AlexDev.SpaceTanks
 {
-    public class PlayerManager : MonoBehaviour
+    public class PlayerManager : MonoBehaviourPun
     {
-        private static int _coinsValue;
+        [SerializeField] private SpriteRenderer _bodySprite;
 
-        public delegate void OnCoinsChange(int coinsAmount);
-        public static OnCoinsChange onCoinsChangeEvent;
 
-        public static void AddCoins(int amount)
+        private void Awake()
         {
-            if (amount > 0)
-            {
-                _coinsValue += amount;
-                if (onCoinsChangeEvent != null)
-                    onCoinsChangeEvent.Invoke(_coinsValue);
-            }
+            if (photonView.IsMine)
+                PlayersStatsManager.SetPlayerViewID(photonView.ViewID);
         }
-
-        public static void SpendCoins(int price)
+        private void Start()
         {
-            if (_coinsValue >= price)
-            {
-                AddCoins(-price);
-            }
+            _bodySprite.color = PlayersStatsManager.Instance.GetPlayerColor(photonView.Owner.UserId);
         }
     }
 }

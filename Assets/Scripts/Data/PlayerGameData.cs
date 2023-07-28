@@ -7,7 +7,8 @@ namespace AlexDev.SpaceTanks
     public class PlayerGameData
     {
         public string Name;
-        public string UserID;   
+        public string UserID;
+        public string Color;
         public int ViewID;
         public int Coins;
         public int Frags;
@@ -15,7 +16,7 @@ namespace AlexDev.SpaceTanks
 
         public override string ToString()
         {
-            return Name + "_" + UserID + "\n" + ViewID + " " + Coins + " " + Deaths;
+            return Name + "_" + UserID + "\n" + Color + " " + ViewID + " " + Coins + " " + Deaths;
         }
     }
 }

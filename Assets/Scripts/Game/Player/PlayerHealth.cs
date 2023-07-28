@@ -22,10 +22,15 @@ namespace AlexDev.SpaceTanks
         public bool IsAlive => !isDead;
         public int GetMaxHealth => _maxHealth;
 
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            if (PhotonNetwork.IsMasterClient)
+                UpdateForNewPlayer(newPlayer);
+        }
+
         private void Awake()
         {
             _health = _maxHealth;
-            photonView.RPC("UpdateForNewPlayer", RpcTarget.MasterClient);
         }
 
         private void Start()
@@ -60,22 +65,9 @@ namespace AlexDev.SpaceTanks
             }
         }
 
-        public void TakeDamage(int damage)
+        public void UpdateForNewPlayer(Player player)
         {
-            /*ChangeHealth(-damage);
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                photonView.RPC("ChangeHealth", RpcTarget.MasterClient, -damage);
-            }*/
-        }
-
-        [PunRPC]
-        public void UpdateForNewPlayer()
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                photonView.RPC("UpdateHealth", RpcTarget.Others, _health, _lastHitPersonViewID);
-            }
+                photonView.RPC("UpdateHealth", player, _health, _lastHitPersonViewID);
         }
 
         [PunRPC]
@@ -112,11 +104,9 @@ namespace AlexDev.SpaceTanks
         {
             if (IsAlive)
             {
-                /*if (photonView.IsMine)
-                    GameManager.Instance.LeaveRoom();*/
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    PlayersStats.Instance.photonView.RPC("AddPlayerFrag", RpcTarget.MasterClient, _lastHitPersonViewID);
+                    PlayersStatsManager.Instance.AddPlayerFrag(_lastHitPersonViewID, photonView.ViewID);
                     Debug.Log($"Player <Color=Red>die</Red> T.T" + name);
                 }
                 isDead = true;

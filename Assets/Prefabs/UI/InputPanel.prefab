@@ -301,8 +301,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3052631320299323103}
   - component: {fileID: 3052631320299323090}
-  - component: {fileID: 3052631320299323089}
   - component: {fileID: 3052631320299323088}
+  - component: {fileID: 3052631320299323089}
   m_Layer: 5
   m_Name: InputPanel
   m_TagString: Untagged
@@ -341,6 +341,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3052631320299323102}
   m_CullTransparentMesh: 1
+--- !u!114 &3052631320299323088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3052631320299323102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9f92c49498dc1444a03781b6fdc8ae2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _inputText: {fileID: 3052631321531933077}
+  _defaultNameConstant: 
+  _acceptButton: {fileID: 3052631321672138534}
+  _isReadyToInput: 0
 --- !u!114 &3052631320299323089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -371,22 +387,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3052631320299323088
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3052631320299323102}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9f92c49498dc1444a03781b6fdc8ae2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _inputText: {fileID: 3052631321531933077}
-  _defaultNameConstant: 
-  _acceptButton: {fileID: 3052631321672138534}
-  _isReadyToInput: 0
 --- !u!1 &3052631320732941426
 GameObject:
   m_ObjectHideFlags: 0
