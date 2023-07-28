@@ -44,6 +44,16 @@ MonoBehaviour:
   - UpdateHealth
   - UpdateCoins
   - DestroyCoin
+  - UpdateForNewPlayer
+  - AddPlayer
+  - UpdatePlayer
+  - UpdatePlayerFrags
+  - AddCoins
+  - AddPlayerFrags
+  - AddPlayerFrag
+  - AddPlayerCoins
+  - Initialization
+  - UpdatePlayerCoins
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

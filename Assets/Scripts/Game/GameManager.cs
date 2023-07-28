@@ -15,8 +15,6 @@ namespace AlexDev.SpaceTanks
 
         [SerializeField] private GameObject _playerPrefab;
 
-        private static int _coinsValue;
-
         public delegate void OnCoinsChange(int coinsValue);
         public static OnCoinsChange OnCoinsChangeEvent;
 
@@ -28,6 +26,35 @@ namespace AlexDev.SpaceTanks
 
         private void Start()
         {
+            if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("Color"))
+            {
+                InstancePlayer();
+            }
+            else
+            {
+                StartCoroutine("WaitingForPlayerStats");
+            }
+        }
+
+        private IEnumerator WaitingForPlayerStats()
+        {
+            bool isStatsEmpty = true;
+            while (isStatsEmpty)
+            {
+                if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("Color"))
+                {
+                    isStatsEmpty = false;
+                }
+                else
+                {
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+            InstancePlayer();
+        }
+
+        public void InstancePlayer()
+        {
             if (_playerPrefab == null)
             {
                 Debug.LogError("<Color=red><a>Missing</a></Color> playerPrefab Reference.");
@@ -35,16 +62,13 @@ namespace AlexDev.SpaceTanks
             else
             {
                 Debug.Log($"We are Instatiating LocalPlayer from {SceneManager.GetActiveScene().name}");
-                InstantPlayer();
-            }
-        }
-
-        private void InstantPlayer()
-        {
-            GameObject player = PhotonNetwork.Instantiate(
+                GameObject player = PhotonNetwork.Instantiate(
                     _playerPrefab.name,
-                    new Vector2(UnityEngine.Random.Range(-3, 3), UnityEngine.Random.Range(-3, 3)),
+                    new Vector2(
+                        Random.Range(-3, 3), 
+                        Random.Range(-3, 3)),
                     Quaternion.identity);
+            }
         }
 
         public override void OnLeftRoom()
@@ -54,7 +78,7 @@ namespace AlexDev.SpaceTanks
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
-            Debug.LogFormat("OnPlayerEnteredRoom() {0}", newPlayer.NickName);
+            Debug.LogFormat("OnPlayerEnteredRoom() {0} {1}", newPlayer.NickName, newPlayer.CustomProperties["Color"]);
         }
 
         public override void OnPlayerLeftRoom(Player player)
@@ -66,24 +90,5 @@ namespace AlexDev.SpaceTanks
         {
             PhotonNetwork.LeaveRoom();
         }
-
-        public static void AddCoins(int amount)
-        {
-            _coinsValue += amount;
-            if (OnCoinsChangeEvent != null)
-                OnCoinsChangeEvent.Invoke(_coinsValue);
-        }
-
-        [PunRPC]
-        private static void UpdateCoins(int coinsAmount)
-        {
-
-        }
-
-        public static void SpendCoins(int price)
-        {
-
-        }
-
     }
 }

@@ -20,6 +20,7 @@ namespace AlexDev.SpaceTanks
             GetComponent<Rigidbody2D>().AddForce(transform.up * _shootForce, ForceMode2D.Impulse);
         }
 
+        [PunRPC]
         public void Initialization(int damage, int ownerID)
         {
             _damage = damage;
@@ -30,7 +31,7 @@ namespace AlexDev.SpaceTanks
         {
             if (!photonView.IsMine && PhotonNetwork.IsConnected)
                 return;
-            if (collision.TryGetComponent<UnitHealth>(out UnitHealth target))
+            if (collision.TryGetComponent<PlayerHealth>(out PlayerHealth target))
             {
                 if (target.TakeDamage(_damage, _ownerID))
                 {

@@ -15,11 +15,11 @@ namespace AlexDev.SpaceTanks
         {
             if (!PhotonNetwork.IsMasterClient)
                 return;
-            if (collision.TryGetComponent<UnitHealth>(out UnitHealth target))
+            if (collision.TryGetComponent<PlayerHealth>(out PlayerHealth target))
             {
                 if (_nextHitTime < Time.realtimeSinceStartup)
                 {
-                    target.TakeDamage(_damage);
+                    target.TakeDamage(_damage, 0);
                     _nextHitTime = Time.realtimeSinceStartup + _hitInterval;
                 }
             }

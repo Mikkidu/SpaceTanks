@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 using Photon.Pun;
 using Photon.Realtime;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace AlexDev.SpaceTanks
 {
@@ -11,6 +13,10 @@ namespace AlexDev.SpaceTanks
         [Tooltip("The maximum number of players per room.")]
         [SerializeField]
         private int _maxPlayersPerRoom = 4;
+        
+        [Tooltip("Rooms table.")]
+        [SerializeField]
+        private RoomsLobbyTable _roomsTable;
 
         [Tooltip("Create room panel")]
         [SerializeField]
@@ -75,15 +81,11 @@ namespace AlexDev.SpaceTanks
                 PhotonNetwork.NickName = PlayerPrefs.GetString(Constants.PLAYER_NAME_PREF_KEY);
         }
 
-        public void Connect()
-        {
-            PhotonNetwork.ConnectUsingSettings();
-        }
-
         public override void OnConnectedToMaster()
         {
             Debug.Log("PUN Basics Tutorial/Launcher: OnConnectedToMaster() was called by PUN");
             IsConnectedToMaster = true;
+            PhotonNetwork.JoinLobby();
         }
 
         public override void OnDisconnected(DisconnectCause cause)
@@ -103,24 +105,37 @@ namespace AlexDev.SpaceTanks
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             if (OnMessageSendEvent != null)
                 OnMessageSendEvent.Invoke("Connected to room. Ready for players");
-            /*if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
-                LoadLevel();*/
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             if (!PhotonNetwork.IsMasterClient)
                 return;
-
             if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
                 LoadLevel();
+        }
+
+        public override void OnJoinedLobby()
+        {
+            Debug.Log("PUN Launcher: OnJoinedToLobby() was called by PUN");
+        }
+
+        public override void OnRoomListUpdate(List<RoomInfo> roomList)
+        {
+            Debug.Log("PUN Launcher: OnRoomListUpdate() was called by PUN");
+            _roomsTable.RefreshRoomList(roomList);            
+        }
+
+        public void Connect()
+        {
+            PhotonNetwork.ConnectUsingSettings();
         }
 
         public void CreateRoom(string roomName)
         {
             if (_isConnectedToMaster)
             {
-                PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = _maxPlayersPerRoom });
+                PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = _maxPlayersPerRoom, IsOpen = true, PublishUserId = true });
                 _lastRoomName = roomName;
             }
         }
@@ -167,7 +182,7 @@ namespace AlexDev.SpaceTanks
 
         public void LoadLevel()
         {
-            if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 0)
             {
                 string message = "We load the room";
                 Debug.Log(message);

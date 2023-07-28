@@ -7,19 +7,26 @@ using Photon.Realtime;
 
 namespace AlexDev.SpaceTanks
 {
-    public class UnitHealth : MonoBehaviourPunCallbacks
+    public class PlayerHealth : MonoBehaviourPunCallbacks
     {
         [SerializeField] private int _health;
         [SerializeField] private int _maxHealth;
         [SerializeField] private PlayerUI _playerUIPrefab;
 
         private bool isDead;
+        private int _lastHitPersonViewID;
 
         public delegate void OnHealthChanged(int hp);
         public OnHealthChanged OnHealthChangedEvent;
 
         public bool IsAlive => !isDead;
         public int GetMaxHealth => _maxHealth;
+
+        public override void OnPlayerEnteredRoom(Player newPlayer)
+        {
+            if (PhotonNetwork.IsMasterClient)
+                UpdateForNewPlayer(newPlayer);
+        }
 
         private void Awake()
         {
@@ -40,11 +47,16 @@ namespace AlexDev.SpaceTanks
             }
         }
 
-        public bool TakeDamage(int damage, int viewId)
+        public bool TakeDamage(int damage, int attackerViewID)
         {
-            if (viewId != photonView.ViewID)
+            if (attackerViewID != photonView.ViewID)
             {
-                TakeDamage(damage);
+                _lastHitPersonViewID = attackerViewID;
+                ChangeHealth(-damage, attackerViewID);
+                if (!PhotonNetwork.IsMasterClient)
+                {
+                    photonView.RPC("ChangeHealth", RpcTarget.MasterClient, -damage, attackerViewID);
+                }
                 return true;
             }
             else
@@ -53,30 +65,21 @@ namespace AlexDev.SpaceTanks
             }
         }
 
-        public void TakeDamage(int damage)
+        public void UpdateForNewPlayer(Player player)
         {
-            ChangeHealth(-damage);
-            if (!PhotonNetwork.IsMasterClient)
-            {
-                photonView.RPC("ChangeHealth", RpcTarget.MasterClient, -damage);
-            }
-        }
-
-        public override void OnPlayerEnteredRoom(Player newPlayer)
-        {
-            if (PhotonNetwork.IsMasterClient)
-            {
-                photonView.RPC("UpdateHealth", RpcTarget.Others, _health);
-            }
+                photonView.RPC("UpdateHealth", player, _health, _lastHitPersonViewID);
         }
 
         [PunRPC]
-        private void ChangeHealth(int damage)
+        private void ChangeHealth(int damage, int attackerViewID)
         {
             _health += damage;
+            if (attackerViewID != 0)
+                _lastHitPersonViewID = attackerViewID;
+            Debug.Log("hit from" + _lastHitPersonViewID);
             if (PhotonNetwork.IsMasterClient)
             {
-                photonView.RPC("UpdateHealth", RpcTarget.All, _health);
+                photonView.RPC("UpdateHealth", RpcTarget.All, _health, _lastHitPersonViewID);
             }
             else
             {
@@ -85,10 +88,13 @@ namespace AlexDev.SpaceTanks
         }
 
         [PunRPC]
-        private void UpdateHealth(int newHealth)
+        private void UpdateHealth(int newHealth, int attackerViewID)
         {
             if (!PhotonNetwork.IsMasterClient)
+            {
                 _health = newHealth;
+                _lastHitPersonViewID = attackerViewID;
+            }
             if (_health <= 0)
                 Death();
             if (OnHealthChangedEvent != null) OnHealthChangedEvent.Invoke(_health);
@@ -98,9 +104,11 @@ namespace AlexDev.SpaceTanks
         {
             if (IsAlive)
             {
-                if (photonView.IsMine)
-                    GameManager.Instance.LeaveRoom();
-
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    PlayersStatsManager.Instance.AddPlayerFrag(_lastHitPersonViewID, photonView.ViewID);
+                    Debug.Log($"Player <Color=Red>die</Red> T.T" + name);
+                }
                 isDead = true;
                 GetComponent<Collider2D>().enabled = false;
             }

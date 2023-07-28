@@ -11,7 +11,7 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private Vector3 _screenOffset = new Vector3(0, 30, 0);
         [SerializeField] private float _characterControllerHeight;
 
-        private UnitHealth _target;
+        private PlayerHealth _target;
         private int _maxHealth;
         private Transform _targetTransform;
         private Renderer _targetRenderer;
@@ -24,7 +24,7 @@ namespace AlexDev.SpaceTanks
             _canvasGroup = GetComponent<CanvasGroup>();
         }
 
-        public void SetTarget(UnitHealth target)
+        public void SetTarget(PlayerHealth target)
         {
             if (target == null)
             {

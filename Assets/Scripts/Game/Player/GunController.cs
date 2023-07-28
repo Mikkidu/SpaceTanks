@@ -6,7 +6,7 @@ using Photon.Pun;
 
 namespace AlexDev.SpaceTanks
 {
-    [RequireComponent(typeof(UnitHealth))]
+    [RequireComponent(typeof(PlayerHealth))]
     public class GunController : MonoBehaviourPun
     {
         [SerializeField] private float _attackInterval = 0.5f;
@@ -16,7 +16,7 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private Transform _gun;
         [SerializeField] private float _rotationSmoothness;
 
-        private UnitHealth _shipHealthScript;
+        private PlayerHealth _shipHealthScript;
         private float _attackTimer;
         private float _rotateSpeed;
 #if PLATFORM_ANDROID
@@ -35,7 +35,7 @@ namespace AlexDev.SpaceTanks
                 enabled = false;
                 return;
             }
-            _shipHealthScript = GetComponent<UnitHealth>();
+            _shipHealthScript = GetComponent<PlayerHealth>();
         }
 
         void LateUpdate()
@@ -53,7 +53,7 @@ namespace AlexDev.SpaceTanks
             {
                 GunRotating(_joystick.Direction);
 #else
-            if {Input.GetMouseButton(0)}
+            if (Input.GetMouseButton(0))
             {
                 Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 GunRotating(mousePosition - (Vector2)transform.position);
@@ -82,10 +82,9 @@ namespace AlexDev.SpaceTanks
         {
             if (_attackTimer <= Time.realtimeSinceStartup)
             {
-                Debug.Log("Bam!");
                 PhotonNetwork.Instantiate(_projectilePrefab.name, _shootPoint.position, _shootPoint.rotation)
                     .GetComponent<Projectile>()
-                    .Initialization(_unitDamage, photonView.ViewID);
+                    .photonView.RPC("Initialization", RpcTarget.All, _unitDamage, photonView.ViewID);
                 _attackTimer = Time.realtimeSinceStartup + _attackInterval;
             }
         }

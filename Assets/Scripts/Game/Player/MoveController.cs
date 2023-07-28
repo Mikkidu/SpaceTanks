@@ -7,7 +7,7 @@ using Photon.Pun;
 
 namespace AlexDev.SpaceTanks
 {
-    [RequireComponent(typeof(UnitHealth))]
+    [RequireComponent(typeof(PlayerHealth))]
     public class MoveController : MonoBehaviourPun
     {
         [SerializeField] private float _rotateSmooth;
@@ -17,7 +17,7 @@ namespace AlexDev.SpaceTanks
 #endif
 
         private float _rotateSpeed;
-        private UnitHealth _shipHealth;
+        private PlayerHealth _shipHealth;
 
 
 #if PLATFORM_ANDROID
@@ -53,7 +53,8 @@ namespace AlexDev.SpaceTanks
         void Start()
         {
             CameraWork _cameraWork = this.gameObject.GetComponent<CameraWork>();
-            _shipHealth = GetComponent<UnitHealth>();
+            _shipHealth = GetComponent<PlayerHealth>();
+            PlayersStatsManager.Instance.MyViewID = photonView.ViewID;
             if (_cameraWork != null)
             {
                 if (photonView.IsMine)
