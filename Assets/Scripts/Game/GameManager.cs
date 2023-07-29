@@ -14,10 +14,18 @@ namespace AlexDev.SpaceTanks
         public static GameManager Instance;
 
         [SerializeField] private GameObject _playerPrefab;
+        [SerializeField] private GameUI _gameUI;
 
-        public delegate void OnCoinsChange(int coinsValue);
-        public static OnCoinsChange OnCoinsChangeEvent;
+        private int _deadPlayersCount = 0;
+        private bool _isGameOn = false;
 
+        private bool CanStartGame
+        {
+            get
+            {
+                return PhotonNetwork.PlayerList.Length > 1;
+            }
+        }
 
         private void Awake()
         {
@@ -26,6 +34,7 @@ namespace AlexDev.SpaceTanks
 
         private void Start()
         {
+            PlayersStatsManager.Instance.OnPlayerDieEvent += OnPlayerDie;
             if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("Color"))
             {
                 InstancePlayer();
@@ -34,6 +43,8 @@ namespace AlexDev.SpaceTanks
             {
                 StartCoroutine("WaitingForPlayerStats");
             }
+            if (CanStartGame)
+                StartGame();
         }
 
         private IEnumerator WaitingForPlayerStats()
@@ -47,7 +58,7 @@ namespace AlexDev.SpaceTanks
                 }
                 else
                 {
-                    yield return new WaitForSeconds(0.5f);
+                    yield return new WaitForSeconds(0.1f);
                 }
             }
             InstancePlayer();
@@ -71,6 +82,22 @@ namespace AlexDev.SpaceTanks
             }
         }
 
+        private void StartGame()
+        {
+            _isGameOn = true;
+        }
+
+        private void OnPlayerDie(int viewID)
+        {
+            Debug.Log("PlayerDie");
+            if (PlayersStatsManager.Instance.LivePlayersCount <= 1)
+            {
+                Debug.Log("PlayerDie");
+                _isGameOn = false;
+                _gameUI.ShowWinPanel();
+            }
+        }
+
         public override void OnLeftRoom()
         {
             SceneManager.LoadScene("Lobby");
@@ -79,6 +106,8 @@ namespace AlexDev.SpaceTanks
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             Debug.LogFormat("OnPlayerEnteredRoom() {0} {1}", newPlayer.NickName, newPlayer.CustomProperties["Color"]);
+            if (!_isGameOn && CanStartGame)
+                StartGame();
         }
 
         public override void OnPlayerLeftRoom(Player player)
