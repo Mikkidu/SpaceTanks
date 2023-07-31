@@ -30,9 +30,8 @@ namespace AlexDev.SpaceTanks
 
         public void ShowWinPanel()
         {
-            Debug.Log("PlayerDie");
             _winPanel.SetActive(true);
-            _leaderboardText.transform.parent.gameObject.SetActive(false);
+            _leaderboardText.transform.parent.parent.gameObject.SetActive(false);
             string hederText = $"{PlayersStatsManager.Instance.GetFirsLivePlayerName(true)} won this battle!";
             string leadersTableText = PlayersStatsManager.Instance.GetFullPlayersStates();
             _winPanel.GetComponent<LeadersPanelUI>().Initialization(hederText, leadersTableText);

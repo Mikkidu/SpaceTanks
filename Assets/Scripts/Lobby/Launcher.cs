@@ -40,7 +40,6 @@ namespace AlexDev.SpaceTanks
 
         private bool _isConnectedToMaster;
         private bool _isRedyToEnter;
-        private bool _isRoomChange;
 
         private string _lastRoomName;
 
@@ -98,6 +97,8 @@ namespace AlexDev.SpaceTanks
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
             Debug.Log("PUN Basics Tutorial/Launcher:OnJoinRoomFailed() was called by PUN. No random room available or room is full.");
+            if (OnMessageSendEvent != null)
+                OnMessageSendEvent.Invoke("Connected to room <color=red>failed</color>.");
         }
 
         public override void OnJoinedRoom()
@@ -118,6 +119,8 @@ namespace AlexDev.SpaceTanks
         public override void OnJoinedLobby()
         {
             Debug.Log("PUN Launcher: OnJoinedToLobby() was called by PUN");
+            if (_isRedyToEnter)
+                LoadLevel();
         }
 
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
@@ -142,31 +145,11 @@ namespace AlexDev.SpaceTanks
 
         public void JoinRoom(string roomName)
         {
+            _isRedyToEnter = true;
             if (!PhotonNetwork.InRoom)
                 PhotonNetwork.JoinRoom(roomName);
-            else if (PhotonNetwork.CurrentRoom.PlayerCount > 1)
+            else
                 LoadLevel();
-            _isRedyToEnter = true;
-            /*if (!PhotonNetwork.InRoom)
-            {
-                if (roomName != PhotonNetwork.CurrentRoom.Name)
-                {
-                    _lastRoomName = roomName;
-                    string message = "You are alredy connectod to another room.";
-                    Debug.Log(message);
-                    _closeRoomPanel.SetActive(true);
-                    if (OnMessageSendEvent != null)
-                        OnMessageSendEvent.Invoke(message);
-                }
-                PhotonNetwork.JoinRoom(roomName);
-            }
-            else if (roomName != PhotonNetwork.CurrentRoom.Name)
-            {
-                string message = "We load the room";
-                Debug.Log(message);
-                if (OnMessageSendEvent != null)
-                    OnMessageSendEvent.Invoke(message);
-            }*/
         }
         
 
@@ -182,7 +165,7 @@ namespace AlexDev.SpaceTanks
 
         public void LoadLevel()
         {
-            if (_isRedyToEnter && PhotonNetwork.CurrentRoom.PlayerCount > 0)
+            if (_isRedyToEnter)
             {
                 string message = "We load the room";
                 Debug.Log(message);

@@ -16,8 +16,8 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private GameObject _playerPrefab;
         [SerializeField] private GameUI _gameUI;
 
-        private int _deadPlayersCount = 0;
         private bool _isGameOn = false;
+        public bool IsGameOn => _isGameOn;
 
         private bool CanStartGame
         {
@@ -89,10 +89,8 @@ namespace AlexDev.SpaceTanks
 
         private void OnPlayerDie(int viewID)
         {
-            Debug.Log("PlayerDie");
             if (PlayersStatsManager.Instance.LivePlayersCount <= 1)
             {
-                Debug.Log("PlayerDie");
                 _isGameOn = false;
                 _gameUI.ShowWinPanel();
             }

@@ -82,6 +82,8 @@ namespace AlexDev.SpaceTanks
 
         private void Move(Vector2 direction)
         {
+            if (!GameManager.Instance.IsGameOn)
+                return;
             if (direction != Vector2.zero)
             {
                 float directionAngle = Vector2.SignedAngle(transform.up, direction) + transform.eulerAngles.z;
