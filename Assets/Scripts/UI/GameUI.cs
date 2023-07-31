@@ -12,7 +12,7 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private TextMeshProUGUI _leaderboardText;
         [SerializeField] private GameObject _winPanel;
 
-        private void Awake()
+        private void Start()
         {
             PlayersStatsManager.Instance.OnPlayerStateChangedEvent += UpdatePlayerList;
             PlayersStatsManager.Instance.OnCoinsChangeEvent += UpdateCoins;
