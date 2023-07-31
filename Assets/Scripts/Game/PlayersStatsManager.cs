@@ -20,13 +20,32 @@ namespace AlexDev.SpaceTanks
             set { _myViewID = value; }
         }
 
+        public int LivePlayersCount
+        {
+            get
+            {
+                int count= 0;
+                Player[] players = PhotonNetwork.PlayerList;
+                for (int i = 0; i < players.Length; i++)
+                {
+                    if ((bool)players[i].CustomProperties["IsDead"] == false)
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            }
+        }
 
+        public delegate void OnPlayerDie(int viewID);
+        public OnPlayerDie OnPlayerDieEvent;
 
         public delegate void OnPlayerStateChanged();
         public OnPlayerStateChanged OnPlayerStateChangedEvent;
 
         public delegate void OnCoinsChange(int coinsValue);
         public OnCoinsChange OnCoinsChangeEvent;
+
 
         private void Awake()
         {
@@ -74,7 +93,6 @@ namespace AlexDev.SpaceTanks
         {
             AddIntPlayerState(killerViewID, "Frags", 1);
             ChangeBoolPlayerState(victimViewID, "IsDead", true);
-
         }
 
         public Player GetPlayer(string userID)
@@ -87,6 +105,24 @@ namespace AlexDev.SpaceTanks
                 }
             }
             return null;
+        }
+
+        public string GetFirsLivePlayerName(bool isColored)
+        {
+            string txt = string.Empty;
+            Player[] players = PhotonNetwork.PlayerList;
+            for (int i = 0; i < players.Length; i++)
+            {
+                if ((bool)players[i].CustomProperties["IsDead"] == false)
+                {
+                    Player player = players[i];
+                    txt = player.NickName;
+                    if (isColored)
+                        txt = $"<color={GetPlayerHexColor(player.UserId)}>" + txt + "</color>";
+                    return txt;
+                }
+            }
+            return txt;
         }
 
         private void AddIntPlayerState(int viewID, string stateName, int addValue)
@@ -106,6 +142,7 @@ namespace AlexDev.SpaceTanks
 
         private void ChangeBoolPlayerState(int viewID, string stateName, bool isTrue)
         {
+            Debug.Log(viewID);
             Player player = GetPlayer(viewID);
             if (player != null)
             {
@@ -132,14 +169,26 @@ namespace AlexDev.SpaceTanks
 
         public Color GetPlayerColor(int viewID)
         {
-            string color = GetPlayer(viewID).CustomProperties["Color"].ToString();
-            return PlayerColors.GetRgbColor(color);
+            string colorName = GetPlayer(viewID).CustomProperties["Color"].ToString();
+            return PlayerColors.GetRgbColor(colorName);
+        }
+        
+        public string GetPlayerHexColor(int viewID)
+        {
+            string colorName = GetPlayer(viewID).CustomProperties["Color"].ToString();
+            return PlayerColors.GetHexColor(colorName);
         }
         
         public Color GetPlayerColor(string userID)
         {
-            string color = GetPlayer(userID).CustomProperties["Color"].ToString();
-            return PlayerColors.GetRgbColor(color);
+            string colorName = GetPlayer(userID).CustomProperties["Color"].ToString();
+            return PlayerColors.GetRgbColor(colorName);
+        }
+        
+        public string GetPlayerHexColor(string userID)
+        {
+            string colorName = GetPlayer(userID).CustomProperties["Color"].ToString();
+            return PlayerColors.GetHexColor(colorName);
         }
 
 
@@ -150,7 +199,7 @@ namespace AlexDev.SpaceTanks
             foreach(Player player in PhotonNetwork.PlayerList)
             {
                 string hexColor = PlayerColors.GetHexColor(player.CustomProperties["Color"].ToString());
-                tempText = $"{player.NickName,10}\t";
+                tempText = $"{player.NickName,-10}\t";
                 tempText += $"{player.CustomProperties["Frags"],4}\t";
                 tempText += $"{player.CustomProperties["Coins"],4}";
                 if ((bool)player.CustomProperties["IsDead"])
@@ -170,7 +219,7 @@ namespace AlexDev.SpaceTanks
             foreach (Player player in PhotonNetwork.PlayerList)
             {
                 string hexColor = PlayerColors.GetHexColor(player.CustomProperties["Color"].ToString());
-                tempText = $"<color={hexColor}>{player.NickName,10}</color>";
+                tempText = $"<color={hexColor}>{player.NickName,-10}</color>";
                 if ((int)player.CustomProperties["ViewID"] == _myViewID)
                     tempText = "<mark>" + tempText + "</mark>";
                 outputText += tempText + "\n";
@@ -190,6 +239,9 @@ namespace AlexDev.SpaceTanks
             if (targetPlayer.IsLocal && changedProps.ContainsKey("Coins"))
                 if (OnCoinsChangeEvent != null)
                     OnCoinsChangeEvent.Invoke((int)targetPlayer.CustomProperties["Coins"]);
+            if (changedProps.TryGetValue("IsDead", out object isDead) && (bool)isDead)
+                if (OnPlayerDieEvent != null)
+                    OnPlayerDieEvent.Invoke((int)targetPlayer.CustomProperties["ViewID"]);
             Debug.Log(txt);
             
         }

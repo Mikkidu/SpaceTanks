@@ -20,7 +20,7 @@ namespace AlexDev.SpaceTanks
 
         private void Awake()
         {
-            this.transform.SetParent(GameObject.FindObjectOfType<Canvas>().transform, false);
+            this.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform, false);
             _canvasGroup = GetComponent<CanvasGroup>();
         }
 
