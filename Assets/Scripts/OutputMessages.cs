@@ -5,19 +5,22 @@ using TMPro;
 
 namespace AlexDev.SpaceTanks
 {
-    public class StatesOutput : MonoBehaviour
+    public class OutputMessages : MonoBehaviour
     {
         [Tooltip("State output text")]
         [SerializeField]
         private TextMeshProUGUI _stateOutputText;
-
-        [SerializeField] private Launcher _launcher;
+        [SerializeField] private GameObject[] _messagesSenders;
 
         private void Start()
         {
-            _launcher.OnMasterConnectionChangeEvent += ConnectingOutput;
+            //_messagesSender.OnMasterConnectionChangeEvent += ConnectingOutput;
             _stateOutputText.text = "Connecting to server";
-            _launcher.OnMessageSendEvent += OutputMessage;
+            foreach(GameObject sender in _messagesSenders)
+            {
+                if (sender.TryGetComponent<IMessageSender>(out IMessageSender messageSender))
+                    messageSender.OnMessageSendEvent += OutputMessage;
+            }
         }
 
         public void ConnectingOutput(bool isConnected)

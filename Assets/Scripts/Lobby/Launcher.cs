@@ -8,8 +8,10 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 namespace AlexDev.SpaceTanks
 {
-    public class Launcher : MonoBehaviourPunCallbacks
+    public class Launcher : MonoBehaviourPunCallbacks, IMessageSender
     {
+        public static Launcher Instance;
+
         [Tooltip("The maximum number of players per room.")]
         [SerializeField]
         private int _maxPlayersPerRoom = 4;
@@ -59,11 +61,17 @@ namespace AlexDev.SpaceTanks
         public delegate void OnMasterConnectionChange(bool isConnected);
         public OnMasterConnectionChange OnMasterConnectionChangeEvent;
 
-        public delegate void OnMessageSend(string message);
-        public OnMessageSend OnMessageSendEvent;
+        private IMessageSender.OnMessageSend _onMessageSendEvent;
+        public IMessageSender.OnMessageSend OnMessageSendEvent
+        {
+            get { return _onMessageSendEvent; }
+            set { _onMessageSendEvent = value; }
+        }
 
         private void Awake()
         {
+            Instance = this;
+ 
             PhotonNetwork.AutomaticallySyncScene = true;
             _createRoomPanel.OnNameAcceptedEvent += CreateRoom;
             _joinRoomPanel.OnNameAcceptedEvent += JoinRoom;
@@ -165,13 +173,15 @@ namespace AlexDev.SpaceTanks
 
         public void LoadLevel()
         {
-            if (_isRedyToEnter)
+            if (!_isRedyToEnter)
+                return;
+
+            if (ScenesStateMachine.ChangeScene(ScenesStates.Game))
             {
                 string message = "We load the room";
                 Debug.Log(message);
                 if (OnMessageSendEvent != null)
                     OnMessageSendEvent.Invoke(message);
-                PhotonNetwork.LoadLevel("Game");
             }
         }
     }

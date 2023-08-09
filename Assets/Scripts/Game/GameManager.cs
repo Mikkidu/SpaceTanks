@@ -15,6 +15,8 @@ namespace AlexDev.SpaceTanks
 
         [SerializeField] private GameObject _playerPrefab;
         [SerializeField] private GameUI _gameUI;
+        [SerializeField] private Transform _bottomLeftCorner;
+        [SerializeField] private Transform _upperRightCorner;
 
         private bool _isGameOn = false;
         public bool IsGameOn => _isGameOn;
@@ -73,12 +75,9 @@ namespace AlexDev.SpaceTanks
             else
             {
                 Debug.Log($"We are Instatiating LocalPlayer from {SceneManager.GetActiveScene().name}");
-                GameObject player = PhotonNetwork.Instantiate(
-                    _playerPrefab.name,
-                    new Vector2(
-                        Random.Range(-3, 3), 
-                        Random.Range(-3, 3)),
-                    Quaternion.identity);
+                float randomX = Random.Range(_bottomLeftCorner.position.x, _upperRightCorner.position.x);
+                float randomY = Random.Range(_bottomLeftCorner.position.y, _upperRightCorner.position.y);
+                PhotonNetwork.Instantiate(_playerPrefab.name, new Vector2(randomX, randomY), Quaternion.identity);
             }
         }
 
@@ -98,7 +97,7 @@ namespace AlexDev.SpaceTanks
 
         public override void OnLeftRoom()
         {
-            SceneManager.LoadScene("Lobby");
+            ScenesStateMachine.ChangeScene(ScenesStates.Lobby);
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
