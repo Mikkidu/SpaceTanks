@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,7 +30,7 @@ namespace AlexDev.SpaceTanks
         };
         public static string[] _colorKeys = new string[]
             {
-                "Black",
+                //"Black",
                 "Yellow",
                 "Fuchsia",
                 "Purple",

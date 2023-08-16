@@ -84,6 +84,8 @@ namespace AlexDev.SpaceTanks
         private void StartGame()
         {
             _isGameOn = true;
+            AudioManager.instance.PlayMusic("BattleMusic");
+            _gameUI.StartGame();
         }
 
         private void OnPlayerDie(int viewID)

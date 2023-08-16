@@ -199,9 +199,9 @@ namespace AlexDev.SpaceTanks
             foreach(Player player in PhotonNetwork.PlayerList)
             {
                 string hexColor = PlayerColors.GetHexColor(player.CustomProperties["Color"].ToString());
-                tempText = $"{player.NickName,-10}\t";
-                tempText += $"{player.CustomProperties["Frags"],4}\t";
-                tempText += $"{player.CustomProperties["Coins"],4}";
+                tempText = $"{player.NickName,-10}";
+                tempText += $"\t{player.CustomProperties["Frags"],4}";
+                tempText += $"\t\t{player.CustomProperties["Coins"],4}";
                 if ((bool)player.CustomProperties["IsDead"])
                     tempText += $"Dead";
                 tempText = $"<color={hexColor}>" + tempText + "</color>";

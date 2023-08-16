@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 using Photon.Pun;
 
@@ -43,7 +40,7 @@ namespace AlexDev.SpaceTanks
 #if PLATFORM_ANDROID
         private void AddJoystick()
         {
-            JoystickManager joystickManager = Instantiate(_joystickManagerPrefab, GameObject.FindObjectOfType<Canvas>().transform);
+            JoystickManager joystickManager = Instantiate(_joystickManagerPrefab, GameObject.FindGameObjectWithTag("Canvas").transform);
             GetComponent<MoveController>().SetJoystick = joystickManager.GetLeftJoystick;
             GetComponent<GunController>().SetJoystick = joystickManager.GetRightJoystick;
             _rotateSmooth /= 2;
@@ -55,7 +52,7 @@ namespace AlexDev.SpaceTanks
             CameraWork _cameraWork = this.gameObject.GetComponent<CameraWork>();
             _shipHealth = GetComponent<PlayerHealth>();
             PlayersStatsManager.Instance.MyViewID = photonView.ViewID;
-            /*if (_cameraWork != null)
+            if (_cameraWork != null)
             {
                 if (photonView.IsMine)
                 {
@@ -65,7 +62,7 @@ namespace AlexDev.SpaceTanks
             else
             {
                 Debug.LogError("<Color=Red><a>Missing</a></Color> CameraWork Component on playerPrefab.", this);
-            }*/
+            }
         }
 
         void Update()

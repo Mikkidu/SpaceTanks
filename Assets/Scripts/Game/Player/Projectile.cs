@@ -18,6 +18,7 @@ namespace AlexDev.SpaceTanks
             if (!photonView.IsMine && PhotonNetwork.IsConnected)
                 return;
             GetComponent<Rigidbody2D>().AddForce(transform.up * _shootForce, ForceMode2D.Impulse);
+            AudioManager.instance.PlaySound("fire_laser");
         }
 
         [PunRPC]
@@ -35,6 +36,7 @@ namespace AlexDev.SpaceTanks
             {
                 if (target.TakeDamage(_damage, _ownerID))
                 {
+                    AudioManager.instance.PlaySound("hit_laser");
                     photonView.RPC("DestroyBullet", RpcTarget.All, 0f);
                 }
             }

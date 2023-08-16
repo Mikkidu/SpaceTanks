@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 using Photon.Pun;
 using Photon.Realtime;
-using Hashtable = ExitGames.Client.Photon.Hashtable;
+
 
 namespace AlexDev.SpaceTanks
 {
@@ -36,30 +35,7 @@ namespace AlexDev.SpaceTanks
         [SerializeField]
         private GameObject _closeRoomPanel;
 
-        [Tooltip("Reconnect Button")]
-        [SerializeField]
-        private GameObject _reconnectButton;
-
-        private bool _isConnectedToMaster;
         private bool _isRedyToEnter;
-
-        private string _lastRoomName;
-
-        public bool IsConnectedToMaster
-        {
-            get { return _isConnectedToMaster; }
-            set
-            {
-                _isConnectedToMaster = value;
-                if (_reconnectButton != null)
-                    _reconnectButton.SetActive(!_isConnectedToMaster);
-                if (OnMasterConnectionChangeEvent != null)
-                    OnMasterConnectionChangeEvent.Invoke(_isConnectedToMaster);
-            }
-        }
-
-        public delegate void OnMasterConnectionChange(bool isConnected);
-        public OnMasterConnectionChange OnMasterConnectionChangeEvent;
 
         private IMessageSender.OnMessageSend _onMessageSendEvent;
         public IMessageSender.OnMessageSend OnMessageSendEvent
@@ -76,31 +52,12 @@ namespace AlexDev.SpaceTanks
             _createRoomPanel.OnNameAcceptedEvent += CreateRoom;
             _joinRoomPanel.OnNameAcceptedEvent += JoinRoom;
             _playerNamePanel.OnNameAcceptedEvent += ChangeName;
-            OnMasterConnectionChangeEvent += _createRoomPanel.OnReadyStateChange;
-            OnMasterConnectionChangeEvent += _joinRoomPanel.OnReadyStateChange;
         }
 
         private void Start()
         {
-            if (!PhotonNetwork.IsConnected)
-                Connect();
-            if (PlayerPrefs.HasKey(Constants.PLAYER_NAME_PREF_KEY))
-                PhotonNetwork.NickName = PlayerPrefs.GetString(Constants.PLAYER_NAME_PREF_KEY);
+            AudioManager.instance.PlayMusicIfDifferent("MenuMusic");
         }
-
-        public override void OnConnectedToMaster()
-        {
-            Debug.Log("PUN Basics Tutorial/Launcher: OnConnectedToMaster() was called by PUN");
-            IsConnectedToMaster = true;
-            PhotonNetwork.JoinLobby();
-        }
-
-        public override void OnDisconnected(DisconnectCause cause)
-        {
-            Debug.LogWarningFormat("PUN Basics Tutorial/Launcher: OnDisconnected() was called by PUN with reason {0}", cause);
-            IsConnectedToMaster = false;
-        }
-
 
         public override void OnJoinRoomFailed(short returnCode, string message)
         {
@@ -114,6 +71,7 @@ namespace AlexDev.SpaceTanks
             Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
             if (OnMessageSendEvent != null)
                 OnMessageSendEvent.Invoke("Connected to room. Ready for players");
+            LoadLevel();
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
@@ -124,30 +82,17 @@ namespace AlexDev.SpaceTanks
                 LoadLevel();
         }
 
-        public override void OnJoinedLobby()
-        {
-            Debug.Log("PUN Launcher: OnJoinedToLobby() was called by PUN");
-            if (_isRedyToEnter)
-                LoadLevel();
-        }
-
         public override void OnRoomListUpdate(List<RoomInfo> roomList)
         {
             Debug.Log("PUN Launcher: OnRoomListUpdate() was called by PUN");
             _roomsTable.RefreshRoomList(roomList);            
         }
 
-        public void Connect()
-        {
-            PhotonNetwork.ConnectUsingSettings();
-        }
-
         public void CreateRoom(string roomName)
         {
-            if (_isConnectedToMaster)
+            if (ConnectionManager.Instance.IsConnectedToMaster)
             {
                 PhotonNetwork.CreateRoom(roomName, new RoomOptions { MaxPlayers = _maxPlayersPerRoom, IsOpen = true, PublishUserId = true });
-                _lastRoomName = roomName;
             }
         }
 
@@ -169,12 +114,13 @@ namespace AlexDev.SpaceTanks
         public void ChangeName(string name)
         {
             PhotonNetwork.NickName = name;
+            DataManager.instance.SaveName(name);
         }
 
         public void LoadLevel()
         {
-            if (!_isRedyToEnter)
-                return;
+            //if (!_isRedyToEnter)
+            //    return;
 
             if (ScenesStateMachine.ChangeScene(ScenesStates.Game))
             {

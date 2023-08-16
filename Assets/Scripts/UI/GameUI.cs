@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 namespace AlexDev.SpaceTanks
@@ -11,6 +8,7 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private TextMeshProUGUI _coinText;
         [SerializeField] private TextMeshProUGUI _leaderboardText;
         [SerializeField] private GameObject _winPanel;
+        [SerializeField] private GameObject _waitingPanel;
 
         private void Start()
         {
@@ -35,6 +33,11 @@ namespace AlexDev.SpaceTanks
             string hederText = $"{PlayersStatsManager.Instance.GetFirsLivePlayerName(true)} won this battle!";
             string leadersTableText = PlayersStatsManager.Instance.GetFullPlayersStates();
             _winPanel.GetComponent<LeadersPanelUI>().Initialization(hederText, leadersTableText);
+        }
+
+        public void StartGame()
+        {
+            _waitingPanel.SetActive(false);
         }
     }
 }

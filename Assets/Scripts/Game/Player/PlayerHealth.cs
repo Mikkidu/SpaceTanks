@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 using Photon.Pun;
@@ -12,6 +10,7 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private int _health;
         [SerializeField] private int _maxHealth;
         [SerializeField] private PlayerUI _playerUIPrefab;
+        [SerializeField] private ParticleSystem _deadFire;
 
         private bool isDead;
         private int _lastHitPersonViewID;
@@ -110,6 +109,8 @@ namespace AlexDev.SpaceTanks
                     Debug.Log($"Player <Color=Red>die</Red> T.T" + name);
                 }
                 isDead = true;
+                _deadFire.gameObject.SetActive(true);
+                AudioManager.instance.PlaySound("expl_ship");
                 GetComponent<Collider2D>().enabled = false;
             }
         }

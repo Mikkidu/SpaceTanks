@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 using Photon.Pun;
@@ -12,7 +10,8 @@ namespace AlexDev.SpaceTanks
         public static ConnectionManager Instance;
 
         [Tooltip("Reconnect Button")]
-        public GameObject reconnectButton;
+        [SerializeField]
+        private GameObject _reconnectButton;
 
         private bool _isConnectedToMaster = false;
 
@@ -22,14 +21,27 @@ namespace AlexDev.SpaceTanks
             get { return _onMessageSendEvent; }
             set { _onMessageSendEvent = value; }
         }
+
+        public delegate void OnMasterConnectionChange(bool isConnected);
+        public OnMasterConnectionChange OnMasterConnectionChangeEvent;
+
+        public GameObject SetReconnectButton
+        {
+            set { _reconnectButton = value; }
+        }
+
         public bool IsConnectedToMaster
         {
             get { return _isConnectedToMaster; }
             set
             {
+                if (value == _isConnectedToMaster)
+                    return;
+                if (OnMasterConnectionChangeEvent != null)
+                    OnMasterConnectionChangeEvent.Invoke(value);
                 _isConnectedToMaster = value;
-                if (reconnectButton != null & reconnectButton.activeSelf == _isConnectedToMaster)
-                    reconnectButton.SetActive(!_isConnectedToMaster);
+                if (_reconnectButton != null & _reconnectButton.activeSelf == _isConnectedToMaster)
+                    _reconnectButton.SetActive(!_isConnectedToMaster);
                 if (OnMessageSendEvent != null)
                 {
                     string message;
@@ -42,6 +54,7 @@ namespace AlexDev.SpaceTanks
             }
         }
 
+
         private void Awake()
         {
             if (Instance != null)
@@ -51,6 +64,12 @@ namespace AlexDev.SpaceTanks
             }
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            OutputMessages.AddMessgeSender(this);
+        }
+
+        private void OnDestroy()
+        {
+            OutputMessages.RemoveMessageSender(this);
         }
 
         private void Start()

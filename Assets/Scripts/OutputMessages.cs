@@ -10,17 +10,28 @@ namespace AlexDev.SpaceTanks
         [Tooltip("State output text")]
         [SerializeField]
         private TextMeshProUGUI _stateOutputText;
-        [SerializeField] private GameObject[] _messagesSenders;
+        [SerializeField] private static List<IMessageSender> _messagesSenders = new List<IMessageSender>();
 
         private void Start()
         {
             //_messagesSender.OnMasterConnectionChangeEvent += ConnectingOutput;
-            _stateOutputText.text = "Connecting to server";
-            foreach(GameObject sender in _messagesSenders)
+            _stateOutputText.text = "Console";
+            foreach(IMessageSender sender in _messagesSenders)
             {
-                if (sender.TryGetComponent<IMessageSender>(out IMessageSender messageSender))
-                    messageSender.OnMessageSendEvent += OutputMessage;
+                if (sender != null)
+                    sender.OnMessageSendEvent += OutputMessage;
             }
+        }
+
+        public static void AddMessgeSender(IMessageSender messageSender)
+        {
+            if (!_messagesSenders.Contains(messageSender))
+            _messagesSenders.Add(messageSender);
+        }
+
+        public static void RemoveMessageSender(IMessageSender messageSender)
+        {
+            _messagesSenders.Remove(messageSender);
         }
 
         public void ConnectingOutput(bool isConnected)

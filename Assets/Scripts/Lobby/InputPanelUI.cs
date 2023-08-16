@@ -9,6 +9,7 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private TMP_InputField _inputText;
         [SerializeField] private string _defaultNameConstant;
         [SerializeField] private Button _acceptButton;
+        [SerializeField] private bool _needConnection;
 
         public delegate void OnNameAccepted(string name);
         public OnNameAccepted OnNameAcceptedEvent;
@@ -17,26 +18,15 @@ namespace AlexDev.SpaceTanks
 
         private void Start()
         {
+            if (_needConnection)
+            {
+                ConnectionManager.Instance.OnMasterConnectionChangeEvent += OnReadyStateChange;
+                OnReadyStateChange(ConnectionManager.Instance.IsConnectedToMaster);
+            }
             if (_inputText != null)
             {
                 if (PlayerPrefs.HasKey(_defaultNameConstant))
                     _inputText.text = PlayerPrefs.GetString(_defaultNameConstant);
-            }
-            if (_isReadyToInput)
-                CheckInputField(_inputText.text);
-        }
-
-        public void OnButtonClick()
-        {
-            if (OnNameAcceptedEvent != null)
-                OnNameAcceptedEvent.Invoke(_inputText.text);
-        }
-
-        public void CheckInputField(string name)
-        {
-            if (_isReadyToInput && string.IsNullOrEmpty(name) == _acceptButton.interactable)
-            {
-                _acceptButton.interactable = !_acceptButton.interactable;
             }
         }
 
@@ -45,5 +35,22 @@ namespace AlexDev.SpaceTanks
             _isReadyToInput = isReady;
             CheckInputField(_inputText.text);
         }
+
+        public void OnButtonClick()
+        {
+            if (OnNameAcceptedEvent != null)
+                OnNameAcceptedEvent.Invoke(_inputText.text);
+            AudioManager.instance.PlaySound("button");
+        }
+
+        public void CheckInputField(string name)
+        {
+            if (_isReadyToInput && string.IsNullOrEmpty(name) == _acceptButton.interactable)
+            {
+                _acceptButton.interactable = !_acceptButton.interactable;
+            }
+            AudioManager.instance.PlaySound("tap");
+        }
+
     }
 }
