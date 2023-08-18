@@ -15,7 +15,7 @@ namespace AlexDev.SpaceTanks
             PhotonView targetPhoton = collision.GetComponent<PhotonView>();
             if (targetPhoton.IsMine)
             {
-                PlayersStatsManager.Instance.AddCoins(targetPhoton.ViewID, 1);
+                PlayersStatsManager.instance.AddCoins(targetPhoton.ViewID, 1);
                 photonView.RPC("DestroyCoin", RpcTarget.All);
             }
         }

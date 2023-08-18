@@ -12,13 +12,13 @@ namespace AlexDev.SpaceTanks
 
         private void Start()
         {
-            PlayersStatsManager.Instance.OnPlayerStateChangedEvent += UpdatePlayerList;
-            PlayersStatsManager.Instance.OnCoinsChangeEvent += UpdateCoins;
+            PlayersStatsManager.instance.OnPlayerStateChangedEvent += UpdatePlayerList;
+            PlayersStatsManager.instance.OnCoinsChangeEvent += UpdateCoins;
         }
 
         private void UpdatePlayerList()
         {
-            _leaderboardText.text = PlayersStatsManager.Instance.GetFullPlayersStates();
+            _leaderboardText.text = PlayersStatsManager.instance.GetFullPlayersStates();
         }
 
         private void UpdateCoins(int coinsAmount)
@@ -28,16 +28,22 @@ namespace AlexDev.SpaceTanks
 
         public void ShowWinPanel()
         {
-            _winPanel.SetActive(true);
             _leaderboardText.transform.parent.parent.gameObject.SetActive(false);
-            string hederText = $"{PlayersStatsManager.Instance.GetFirsLivePlayerName(true)} won this battle!";
-            string leadersTableText = PlayersStatsManager.Instance.GetFullPlayersStates();
+            string hederText = $"{PlayersStatsManager.instance.GetFirsLivePlayerName(true)} won this battle!";
+            string leadersTableText = PlayersStatsManager.instance.GetFullPlayersStates();
+            _winPanel.SetActive(true);
             _winPanel.GetComponent<LeadersPanelUI>().Initialization(hederText, leadersTableText);
         }
 
         public void StartGame()
         {
             _waitingPanel.SetActive(false);
+        }
+        
+        public void OnDisable()
+        {
+            PlayersStatsManager.instance.OnPlayerStateChangedEvent -= UpdatePlayerList;
+            PlayersStatsManager.instance.OnCoinsChangeEvent -= UpdateCoins;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace AlexDev.SpaceTanks
         {
             if (_coinPrefab == null)
                 return;
-            if (!GameManager.Instance.IsGameOn)
+            if (!GameManager.instance.IsGameOn)
                 return;
             float randomX = Random.Range(_bottomLeftCorner.position.x, _upperRightCorner.position.x);
             float randomY = Random.Range(_bottomLeftCorner.position.y, _upperRightCorner.position.y);

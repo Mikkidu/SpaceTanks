@@ -105,7 +105,7 @@ namespace AlexDev.SpaceTanks
             {
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    PlayersStatsManager.Instance.AddPlayerFrag(_lastHitPersonViewID, photonView.ViewID);
+                    PlayersStatsManager.instance.AddPlayerFrag(_lastHitPersonViewID, photonView.ViewID);
                     Debug.Log($"Player <Color=Red>die</Red> T.T" + name);
                 }
                 isDead = true;

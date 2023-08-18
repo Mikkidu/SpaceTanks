@@ -11,7 +11,7 @@ namespace AlexDev.SpaceTanks
 {
     public class GameManager : MonoBehaviourPunCallbacks
     {
-        public static GameManager Instance;
+        public static GameManager instance;
 
         [SerializeField] private GameObject _playerPrefab;
         [SerializeField] private GameUI _gameUI;
@@ -19,7 +19,18 @@ namespace AlexDev.SpaceTanks
         [SerializeField] private Transform _upperRightCorner;
 
         private bool _isGameOn = false;
-        public bool IsGameOn => _isGameOn;
+        public bool IsGameOn
+        {
+            get { return _isGameOn; }
+            set
+            {
+                if (_isGameOn == value)
+                    return;
+                _isGameOn = value;
+                if (OnChangeGameStateEvent != null)
+                    OnChangeGameStateEvent.Invoke(_isGameOn);
+            }
+        }
 
         private bool CanStartGame
         {
@@ -29,14 +40,17 @@ namespace AlexDev.SpaceTanks
             }
         }
 
+        public delegate void OnChangeGameState(bool isGameStart);
+        public OnChangeGameState OnChangeGameStateEvent;
+
         private void Awake()
         {
-            Instance = this;
+            instance = this;
         }
 
         private void Start()
         {
-            PlayersStatsManager.Instance.OnPlayerDieEvent += OnPlayerDie;
+            PlayersStatsManager.instance.OnPlayerDieEvent += OnPlayerDie;
             if (PhotonNetwork.LocalPlayer.CustomProperties.ContainsKey("Color"))
             {
                 InstancePlayer();
@@ -83,16 +97,16 @@ namespace AlexDev.SpaceTanks
 
         private void StartGame()
         {
-            _isGameOn = true;
+            IsGameOn = true;
             AudioManager.instance.PlayMusic("BattleMusic");
             _gameUI.StartGame();
         }
 
         private void OnPlayerDie(int viewID)
         {
-            if (PlayersStatsManager.Instance.LivePlayersCount <= 1)
+            if (PlayersStatsManager.instance.LivePlayersCount <= 1)
             {
-                _isGameOn = false;
+                IsGameOn = false;
                 _gameUI.ShowWinPanel();
             }
         }
@@ -105,7 +119,7 @@ namespace AlexDev.SpaceTanks
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             Debug.LogFormat("OnPlayerEnteredRoom() {0} {1}", newPlayer.NickName, newPlayer.CustomProperties["Color"]);
-            if (!_isGameOn && CanStartGame)
+            if (!IsGameOn && CanStartGame)
                 StartGame();
         }
 
@@ -117,6 +131,12 @@ namespace AlexDev.SpaceTanks
         public void LeaveRoom()
         {
             PhotonNetwork.LeaveRoom();
+        }
+
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            PlayersStatsManager.instance.OnPlayerDieEvent -= OnPlayerDie;
         }
     }
 }

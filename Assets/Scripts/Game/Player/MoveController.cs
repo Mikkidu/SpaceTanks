@@ -51,7 +51,7 @@ namespace AlexDev.SpaceTanks
         {
             CameraWork _cameraWork = this.gameObject.GetComponent<CameraWork>();
             _shipHealth = GetComponent<PlayerHealth>();
-            PlayersStatsManager.Instance.MyViewID = photonView.ViewID;
+            PlayersStatsManager.instance.MyViewID = photonView.ViewID;
             if (_cameraWork != null)
             {
                 if (photonView.IsMine)
@@ -79,7 +79,7 @@ namespace AlexDev.SpaceTanks
 
         private void Move(Vector2 direction)
         {
-            if (!GameManager.Instance.IsGameOn)
+            if (!GameManager.instance.IsGameOn)
                 return;
             if (direction != Vector2.zero)
             {

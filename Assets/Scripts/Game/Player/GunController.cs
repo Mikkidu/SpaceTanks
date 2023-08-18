@@ -40,7 +40,7 @@ namespace AlexDev.SpaceTanks
 
         void LateUpdate()
         {
-            if (!GameManager.Instance.IsGameOn)
+            if (!GameManager.instance.IsGameOn)
                 return;
             if (_shipHealthScript.IsAlive)
             {

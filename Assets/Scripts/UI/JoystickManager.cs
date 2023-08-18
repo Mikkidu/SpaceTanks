@@ -11,5 +11,15 @@ namespace AlexDev.SpaceTanks
 
         public Joystick GetLeftJoystick => _leftJoystick;
         public Joystick GetRightJoystick => _rightJoystick;
+        private void Start()
+        {
+            GameManager.instance.OnChangeGameStateEvent += SwitchJoystic;
+        }
+
+        private void SwitchJoystic(bool isSwitchOn)
+        {
+            _leftJoystick.gameObject.SetActive(isSwitchOn);
+            _rightJoystick.gameObject.SetActive(isSwitchOn);
+        }
     }
 }

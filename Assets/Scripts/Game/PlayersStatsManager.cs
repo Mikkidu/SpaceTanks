@@ -10,7 +10,7 @@ namespace AlexDev.SpaceTanks
 {
     public class PlayersStatsManager : MonoBehaviourPunCallbacks
     {
-        public static PlayersStatsManager Instance;
+        public static PlayersStatsManager instance;
 
         private int _myViewID;
 
@@ -45,16 +45,19 @@ namespace AlexDev.SpaceTanks
 
         public delegate void OnCoinsChange(int coinsValue);
         public OnCoinsChange OnCoinsChangeEvent;
+        
+        /*public delegate void OnColorChange(Color color);
+        public OnColorChange OnColorChangeEvent;*/
 
 
         private void Awake()
         {
-            if (Instance != null)
+            if (instance != null)
             {
                 Destroy(gameObject);
                 return;
             }
-            Instance = this;
+            instance = this;
             DontDestroyOnLoad(gameObject);
         }
 
@@ -75,7 +78,7 @@ namespace AlexDev.SpaceTanks
                 { "IsDead", false }
             };
             player.SetCustomProperties(hash);
-            Debug.Log(player.NickName + " " + player.CustomProperties["Color"]);
+            Debug.Log(player.NickName + " " + player.CustomProperties["Color"] + hash["Color"]);
         }
 
         public static void SetPlayerViewID(int viewID)
@@ -182,6 +185,7 @@ namespace AlexDev.SpaceTanks
         public Color GetPlayerColor(string userID)
         {
             string colorName = GetPlayer(userID).CustomProperties["Color"].ToString();
+            Debug.Log(GetPlayer(userID).NickName + " " + colorName + userID);
             return PlayerColors.GetRgbColor(colorName);
         }
         
@@ -196,14 +200,18 @@ namespace AlexDev.SpaceTanks
         {
             string outputText = string.Empty;
             string tempText;
-            foreach(Player player in PhotonNetwork.PlayerList)
+            foreach (Player player in PhotonNetwork.PlayerList)
             {
-                string hexColor = PlayerColors.GetHexColor(player.CustomProperties["Color"].ToString());
+                string hexColor;
+                if (player.CustomProperties.ContainsKey("Color"))
+                    hexColor = PlayerColors.GetHexColor(player.CustomProperties["Color"].ToString());
+                else
+                    hexColor = "#FFFFFF";
                 tempText = $"{player.NickName,-10}";
                 tempText += $"\t{player.CustomProperties["Frags"],4}";
                 tempText += $"\t\t{player.CustomProperties["Coins"],4}";
                 if ((bool)player.CustomProperties["IsDead"])
-                    tempText += $"Dead";
+                    tempText += $" Dead";
                 tempText = $"<color={hexColor}>" + tempText + "</color>";
                 if ((int)player.CustomProperties["ViewID"] == _myViewID)
                     tempText = "<mark>" + tempText + "</mark>";
@@ -232,8 +240,9 @@ namespace AlexDev.SpaceTanks
             string txt = targetPlayer.NickName + " ";
             foreach (object property in changedProps.Keys)
             {
-                txt += property.ToString();
+                txt += property.ToString() + changedProps[property] + "|";
             }
+            Debug.Log(txt);
             if (OnPlayerStateChangedEvent != null)
                 OnPlayerStateChangedEvent.Invoke();
             if (targetPlayer.IsLocal && changedProps.ContainsKey("Coins"))
@@ -242,20 +251,35 @@ namespace AlexDev.SpaceTanks
             if (changedProps.TryGetValue("IsDead", out object isDead) && (bool)isDead)
                 if (OnPlayerDieEvent != null)
                     OnPlayerDieEvent.Invoke((int)targetPlayer.CustomProperties["ViewID"]);
-            Debug.Log(txt);
-            
+            /*if (targetPlayer.IsLocal && changedProps.ContainsKey("Color"))
+            {
+                Debug.Log(gameObject.name + "KeyColor");
+                if (OnColorChangeEvent != null)
+                {
+                    Debug.Log(gameObject.name + "ColorEvent");
+                    OnColorChangeEvent.Invoke(PlayerColors.GetRgbColor(targetPlayer.CustomProperties["Color"].ToString()));
+                }
+            }*/
+            Debug.Log(gameObject.name + "HasColor" + changedProps.ContainsKey("Color"));
         }
 
         public override void OnJoinedRoom()
         {
-            if (PhotonNetwork.IsMasterClient)
-                InitializePlayerCustomProperties(PhotonNetwork.LocalPlayer);
+            if (!PhotonNetwork.IsMasterClient)
+                return;
+            InitializePlayerCustomProperties(PhotonNetwork.LocalPlayer);
         }
 
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             if (!PhotonNetwork.IsMasterClient)
                 return;
+            string txt = newPlayer.NickName + " ";
+            foreach (object property in newPlayer.CustomProperties.Keys)
+            {
+                txt += property.ToString() + newPlayer.CustomProperties[property] + "|";
+            }
+            Debug.Log(txt);
             InitializePlayerCustomProperties(newPlayer);
         }
     }
